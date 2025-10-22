@@ -23,7 +23,21 @@ public class SupplierService {
         return supplierRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Supplier not found"));
     }
+    
+    public Supplier update(Long id, Supplier updatedSupplier) {
+    Supplier existing = supplierRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Supplier not found"));
 
+    existing.setCode(updatedSupplier.getCode());
+    existing.setName(updatedSupplier.getName());
+    existing.setContactName(updatedSupplier.getContactName());
+    existing.setEmail(updatedSupplier.getEmail());
+    existing.setPhone(updatedSupplier.getPhone());
+    existing.setAddress(updatedSupplier.getAddress());
+    existing.setActive(updatedSupplier.isActive());
+
+    return supplierRepository.save(existing);
+}
     public void delete(Long id) {
         supplierRepository.deleteById(id);
     }

@@ -31,4 +31,10 @@ public class SupplierController {
     public void delete(@PathVariable Long id) {
         supplierService.delete(id);
     }
+
+    @PutMapping("/{id}")
+    public Supplier update(@PathVariable Long id, @RequestBody Supplier supplier) {
+        return supplierService.update(id, supplier);
+    }
+
 }
