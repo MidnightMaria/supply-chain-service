@@ -17,7 +17,8 @@ public class PurchaseOrderItem {
     private int quantity;
     private double unitPrice;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "purchase_order_id")
+    @ToString.Exclude
     private PurchaseOrder purchaseOrder;
 }

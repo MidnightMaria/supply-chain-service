@@ -10,15 +10,31 @@ import java.util.List;
 @RequestMapping("/api/purchase-orders")
 @RequiredArgsConstructor
 public class PurchaseOrderController {
-    private final PurchaseOrderService poService;
+
+    private final PurchaseOrderService purchaseOrderService;
 
     @GetMapping
     public List<PurchaseOrder> getAll() {
-        return poService.getAll();
+        return purchaseOrderService.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public PurchaseOrder getById(@PathVariable Long id) {
+        return purchaseOrderService.getById(id);
     }
 
     @PostMapping
-    public PurchaseOrder create(@RequestBody PurchaseOrder po) {
-        return poService.create(po);
+    public PurchaseOrder create(@RequestBody PurchaseOrder order) {
+        return purchaseOrderService.create(order);
+    }
+
+    @PutMapping("/{id}")
+    public PurchaseOrder update(@PathVariable Long id, @RequestBody PurchaseOrder order) {
+        return purchaseOrderService.update(id, order);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        purchaseOrderService.delete(id);
     }
 }

@@ -1,8 +1,9 @@
 package com.agnesmaria.supplychain.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -21,11 +22,14 @@ public class PurchaseOrder {
     @ManyToOne
     private Supplier supplier;
 
-    private LocalDateTime orderDate;
-    private LocalDateTime expectedDeliveryDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate orderDate;
 
-    private String status; // DRAFT, APPROVED, RECEIVED
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate expectedDeliveryDate;
 
-    @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL)
+    private String status; // DRAFT, PENDING, APPROVED, RECEIVED
+
+    @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PurchaseOrderItem> items;
 }
