@@ -13,6 +13,12 @@ spring:
   application:
     name: supply-chain-service
 
+# Logging level
 logging:
   level:
     com.agnesmaria: DEBUG
+
+# 🌐 Inventory service integration
+inventory:
+  service:
+    url: http://inventory-service:8080

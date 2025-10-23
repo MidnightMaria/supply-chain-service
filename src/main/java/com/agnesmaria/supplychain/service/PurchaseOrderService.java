@@ -1,5 +1,6 @@
 package com.agnesmaria.supplychain.service;
 
+import com.agnesmaria.supplychain.client.InventoryClient;
 import com.agnesmaria.supplychain.model.PurchaseOrder;
 import com.agnesmaria.supplychain.model.PurchaseOrderItem;
 import com.agnesmaria.supplychain.model.Supplier;
@@ -15,6 +16,7 @@ public class PurchaseOrderService {
 
     private final PurchaseOrderRepository purchaseOrderRepository;
     private final SupplierRepository supplierRepository;
+    private final InventoryClient inventoryClient;
 
     public List<PurchaseOrder> getAll() {
         return purchaseOrderRepository.findAll();
@@ -26,16 +28,18 @@ public class PurchaseOrderService {
     }
 
     public PurchaseOrder create(PurchaseOrder order) {
-        // 🔹 Ambil supplier berdasarkan ID dari database
+        // 🔹 Validasi Supplier
         if (order.getSupplier() != null && order.getSupplier().getId() != null) {
             Supplier supplier = supplierRepository.findById(order.getSupplier().getId())
                     .orElseThrow(() -> new RuntimeException("Supplier not found"));
             order.setSupplier(supplier);
         }
 
-        // 🔹 Pastikan setiap item punya relasi balik ke order
+        // 🔹 Set relasi 2 arah untuk item
         if (order.getItems() != null) {
-            order.getItems().forEach(item -> item.setPurchaseOrder(order));
+            for (PurchaseOrderItem item : order.getItems()) {
+                item.setPurchaseOrder(order);
+            }
         }
 
         return purchaseOrderRepository.save(order);
@@ -44,10 +48,21 @@ public class PurchaseOrderService {
     public PurchaseOrder update(Long id, PurchaseOrder updated) {
         PurchaseOrder existing = getById(id);
         existing.setStatus(updated.getStatus());
-        existing.setItems(updated.getItems());
-        if (existing.getItems() != null) {
-            existing.getItems().forEach(item -> item.setPurchaseOrder(existing));
+
+        // 🔹 Jika status berubah jadi RECEIVED, update stok otomatis ke inventory-service
+        if ("RECEIVED".equalsIgnoreCase(updated.getStatus()) && existing.getItems() != null) {
+            existing.getItems().forEach(item -> {
+                try {
+                    inventoryClient.adjustStock(item.getProductSku(), item.getQuantity());
+                    System.out.printf("✅ Stok %s bertambah %d unit di inventory-service%n",
+                            item.getProductSku(), item.getQuantity());
+                } catch (Exception e) {
+                    System.err.printf("⚠️ Gagal update stok untuk %s: %s%n",
+                            item.getProductSku(), e.getMessage());
+                }
+            });
         }
+
         return purchaseOrderRepository.save(existing);
     }
 
