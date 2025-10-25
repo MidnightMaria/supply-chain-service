@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.Map;
 
 @Component
@@ -17,11 +16,13 @@ public class InventoryClient {
     private String inventoryServiceUrl;
 
     public void adjustStock(String productSku, int quantity) {
-        String url = inventoryServiceUrl + "/api/inventory/adjust";
+        String url = inventoryServiceUrl + "/api/inventory/adjust-stock"; // ✅ FIXED
         Map<String, Object> request = Map.of(
                 "productSku", productSku,
+                "warehouseId", 1L,
                 "quantity", quantity,
-                "operation", "IN"  // tambah stok
+                "movementType", "IN",
+                "adjustmentReason", "Purchase Order Received"
         );
 
         restTemplate.postForObject(url, request, Void.class);
