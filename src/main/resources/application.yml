@@ -12,7 +12,14 @@ spring:
     show-sql: true
   application:
     name: supply-chain-service
-
+    
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
 # Logging level
 logging:
   level:
