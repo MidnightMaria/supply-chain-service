@@ -16,7 +16,7 @@ public class InventoryClient {
     private String inventoryServiceUrl;
 
     public void adjustStock(String productSku, int quantity) {
-        String url = inventoryServiceUrl + "/api/inventory/adjust-stock"; // ✅ FIXED
+        String url = inventoryServiceUrl + "/api/inventory/adjust-stock"; 
         Map<String, Object> request = Map.of(
                 "productSku", productSku,
                 "warehouseId", 1L,

@@ -25,7 +25,7 @@ logging:
   level:
     com.agnesmaria: DEBUG
 
-# 🌐 Inventory service integration
+# Inventory service integration
 inventory:
   service:
     url: http://inventory-service:8080
